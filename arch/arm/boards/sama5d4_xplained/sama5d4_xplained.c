@@ -31,6 +31,8 @@
 #include <readkey.h>
 #include <spi/spi.h>
 #include <linux/clk.h>
+#include <linux/stat.h>
+#include <envfs.h>
 
 #if defined(CONFIG_NAND_ATMEL)
 static struct atmel_nand_data nand_pdata = {
@@ -318,3 +320,38 @@ static int sama5d4_xplained_main_clock(void)
 	return 0;
 }
 pure_initcall(sama5d4_xplained_main_clock);
+
+static int sama5d4_xplained_env_init(void)
+{
+	struct stat s;
+	const char *diskdev = "/dev/disk0.0";
+	char *bootenv = "/boot/barebox.env";
+	int ret;
+
+	device_detect_by_name("mci1");
+
+	ret = stat(diskdev, &s);
+	if (ret) {
+		pr_info("no %s, using default env\n", diskdev);
+		return 0;
+	}
+
+	mkdir("/boot", 0666);
+	ret = mount(diskdev, "fat", "/boot", NULL);
+	if (ret) {
+		pr_warning("failed to mount %s\n", diskdev);
+		return 0;
+	}
+
+	ret = stat(bootenv, &s);
+	if (ret) {
+		pr_info("no %s, using default env\n", bootenv);
+		return 0;
+	}
+
+	pr_info("found boot env %s\n", bootenv);
+	default_environment_path_set(bootenv);
+
+	return 0;
+}
+late_initcall(sama5d4_xplained_env_init);
