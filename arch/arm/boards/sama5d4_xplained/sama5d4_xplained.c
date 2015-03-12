@@ -30,6 +30,7 @@
 #include <input/qt1070.h>
 #include <readkey.h>
 #include <spi/spi.h>
+#include <i2c/at24.h>
 #include <linux/clk.h>
 #include <linux/stat.h>
 #include <envfs.h>
@@ -175,10 +176,41 @@ struct qt1070_platform_data qt1070_pdata = {
 	.irq_pin	= AT91_PIN_PE10,
 };
 
+/**
+ * AT24MAC402 Standard 2-Kbit EEPROM
+ * First half address range: 0x00-0x7F
+ * Second half address range: 0x80-0xFF
+ */
+static struct at24_platform_data at24mac402_eeprom = {
+	.byte_len = SZ_2K / 8,
+	.page_size = 16,
+	.flags = AT24_FLAG_READONLY,
+};
+
+/**
+ * AT24MAC402 Extended Memory
+ * 128-bit Serial Number: 0x80-0x8F (16 bytes)
+ * EUI-48 Value: 0x9A-0x9F (6 bytes)
+ * EUI-64 Value: 0x98-0x9F (8 bytes)
+ */
+static struct at24_platform_data at24mac402_eui_sn = {
+	.byte_len = 256,
+	.page_size = 1,
+	.flags = AT24_FLAG_READONLY,
+};
+
 static struct i2c_board_info i2c_devices[] = {
 	{
 		.platform_data = &qt1070_pdata,
 		I2C_BOARD_INFO("qt1070", 0x1b),
+	},
+	{
+		.platform_data = &at24mac402_eeprom,
+		I2C_BOARD_INFO("at24", 0x50),
+	},
+	{
+		.platform_data = &at24mac402_eui_sn,
+		I2C_BOARD_INFO("at24", 0x58),
 	},
 };
 
