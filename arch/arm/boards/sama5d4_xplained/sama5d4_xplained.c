@@ -30,6 +30,7 @@
 #include <input/qt1070.h>
 #include <readkey.h>
 #include <spi/spi.h>
+#include <i2c/i2c.h>
 #include <i2c/at24.h>
 #include <linux/clk.h>
 #include <linux/stat.h>
@@ -97,8 +98,38 @@ static struct macb_platform_data macb0_pdata = {
 	.phy_addr = 0,
 };
 
+static void ek_init_ethaddr_i2c(int ethid, int addr, int reg)
+{
+	struct i2c_adapter *adapter;
+	struct i2c_client client;
+	char mac[6];
+	char str[sizeof("xx:xx:xx:xx:xx:xx")];
+	int ret;
+
+	adapter = i2c_get_adapter(0);
+	if (!adapter) {
+		pr_warning("warning: No MAC address set: i2c adapter not found\n");
+		return;
+	}
+
+	client.adapter = adapter;
+	client.addr = addr;
+
+	ret = i2c_read_reg(&client, reg, mac, sizeof(mac));
+	if (ret != sizeof(mac)) {
+		pr_warning("warning: No MAC address set: EEPROM read error\n");
+		return;
+	}
+
+	eth_register_ethaddr(ethid, mac);
+
+	ethaddr_to_string(mac, str);
+	pr_info("MAC address read from EEPROM: %s\n", str);
+}
+
 static void ek_add_device_eth(void)
 {
+	ek_init_ethaddr_i2c(0, 0x58, 0x9A);
 	at91_add_device_eth(0, &macb0_pdata);
 }
 #else
