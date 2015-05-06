@@ -135,6 +135,18 @@ config DRIVER_NET_MACB
 	depends on HAS_MACB
 	select PHYLIB
 
+config DRIVER_NET_MACB1
+	bool "macb1 Ethernet driver (RMII)"
+	depends on HAS_MACB && !VIDEO
+	default n
+	select PHYLIB
+
+config DRIVER_PHYADDR_MACB1
+	int
+	prompt "PHY address"
+	default 0
+	depends on DRIVER_NET_MACB1
+
 config DRIVER_NET_MICREL
 	depends on SPI
 	bool "Micrel KSZ8864RMN Ethernet Switch driver"

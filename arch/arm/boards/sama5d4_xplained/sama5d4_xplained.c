@@ -92,11 +92,20 @@ static void ek_add_device_nand(void)
 static void ek_add_device_nand(void) {}
 #endif
 
+#if defined(CONFIG_DRIVER_NET_MACB) || defined(CONFIG_DRIVER_NET_MACB1)
 #if defined(CONFIG_DRIVER_NET_MACB)
 static struct macb_platform_data macb0_pdata = {
 	.phy_interface = PHY_INTERFACE_MODE_RMII,
 	.phy_addr = 0,
 };
+#endif
+
+#if defined(CONFIG_DRIVER_NET_MACB1)
+static struct macb_platform_data macb1_pdata = {
+	.phy_interface = PHY_INTERFACE_MODE_RMII,
+	.phy_addr = CONFIG_DRIVER_PHYADDR_MACB1,
+};
+#endif
 
 static void ek_init_ethaddr_i2c(int ethid, int addr, int reg)
 {
@@ -129,8 +138,14 @@ static void ek_init_ethaddr_i2c(int ethid, int addr, int reg)
 
 static void ek_add_device_eth(void)
 {
+#if defined(CONFIG_DRIVER_NET_MACB)
 	ek_init_ethaddr_i2c(0, 0x58, 0x9A);
 	at91_add_device_eth(0, &macb0_pdata);
+#endif
+
+#if defined(CONFIG_DRIVER_NET_MACB1)
+	at91_add_device_eth(1, &macb1_pdata);
+#endif
 }
 #else
 static void ek_add_device_eth(void) {}

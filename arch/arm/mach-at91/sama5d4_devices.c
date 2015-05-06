@@ -157,10 +157,10 @@ void at91_add_device_eth(int id, struct macb_platform_data *data)
 			at91_set_B_periph(AT91_PIN_PA18, 0);	/* GRX2 */
 			at91_set_B_periph(AT91_PIN_PA19, 0);	/* GRX3 */
 		case PHY_INTERFACE_MODE_RMII:
-			at91_set_B_periph(AT91_PIN_PA12, 0);	/* GTX0 */
-			at91_set_B_periph(AT91_PIN_PA13, 0);	/* GTX1 */
-			at91_set_B_periph(AT91_PIN_PA8, 0);	/* GRX0 */
-			at91_set_B_periph(AT91_PIN_PA9, 0);	/* GRX1 */
+			at91_set_B_periph(AT91_PIN_PA14, 0);	/* GTX0 */
+			at91_set_B_periph(AT91_PIN_PA15, 0);	/* GTX1 */
+			at91_set_B_periph(AT91_PIN_PA12, 0);	/* GRX0 */
+			at91_set_B_periph(AT91_PIN_PA13, 0);	/* GRX1 */
 			break;
 		default:
 			return;
