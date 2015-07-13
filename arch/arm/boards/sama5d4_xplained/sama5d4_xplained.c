@@ -201,7 +201,7 @@ static void ek_add_device_lcdc(void) {}
 #if defined(CONFIG_MCI_ATMEL)
 static struct atmel_mci_platform_data mci1_data = {
 	.bus_width	= 4,
-	.detect_pin	= AT91_PIN_PE3,
+	.detect_pin	= -EINVAL,
 	.wp_pin		= -EINVAL,
 };
 
