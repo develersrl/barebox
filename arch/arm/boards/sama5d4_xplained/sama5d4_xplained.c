@@ -218,10 +218,13 @@ static void ek_add_device_mci(void) {}
 #endif
 
 #if defined(CONFIG_I2C_GPIO)
+#if defined(CONFIG_KEYBOARD_QT1070)
 struct qt1070_platform_data qt1070_pdata = {
 	.irq_pin	= AT91_PIN_PE10,
 };
+#endif
 
+#if defined(CONFIG_EEPROM_AT24)
 /**
  * AT24MAC402 Standard 2-Kbit EEPROM
  * First half address range: 0x00-0x7F
@@ -244,12 +247,16 @@ static struct at24_platform_data at24mac402_eui_sn = {
 	.page_size = 1,
 	.flags = AT24_FLAG_READONLY,
 };
+#endif
 
 static struct i2c_board_info i2c_devices[] = {
+#if defined(CONFIG_KEYBOARD_QT1070)
 	{
 		.platform_data = &qt1070_pdata,
 		I2C_BOARD_INFO("qt1070", 0x1b),
 	},
+#endif
+#if defined(CONFIG_EEPROM_AT24)
 	{
 		.platform_data = &at24mac402_eeprom,
 		I2C_BOARD_INFO("at24", 0x50),
@@ -258,12 +265,16 @@ static struct i2c_board_info i2c_devices[] = {
 		.platform_data = &at24mac402_eui_sn,
 		I2C_BOARD_INFO("at24", 0x58),
 	},
+#endif
 };
 
 static void ek_add_device_i2c(void)
 {
+#if defined(CONFIG_KEYBOARD_QT1070)
 	at91_set_gpio_input(qt1070_pdata.irq_pin, 0);
 	at91_set_deglitch(qt1070_pdata.irq_pin, 1);
+#endif
+
 	at91_add_device_i2c(0, i2c_devices, ARRAY_SIZE(i2c_devices));
 }
 #else
