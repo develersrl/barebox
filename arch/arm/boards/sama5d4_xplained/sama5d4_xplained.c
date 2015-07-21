@@ -309,13 +309,7 @@ static void ek_add_device_spi(void) {}
 #ifdef CONFIG_LED_GPIO
 struct gpio_led leds[] = {
 	{
-		.gpio	= AT91_PIN_PD30,
-		.active_low	= 0,
-		.led	= {
-			.name = "d8",
-		},
-	}, {
-		.gpio	= AT91_PIN_PE15,
+		.gpio	= AT91_PIN_PB31,
 		.active_low	= 0,
 		.led	= {
 			.name = "d10",
