@@ -867,8 +867,18 @@ static int __init atmel_pmecc_nand_init_params(struct device_d *dev,
 	int cap, sector_size, err_no;
 	int ret;
 
-	cap = host->board->pmecc_corr_cap;
-	sector_size = host->board->pmecc_sector_size;
+	if (host->board->pmecc_corr_cap || host->board->pmecc_sector_size) {
+		cap = host->board->pmecc_corr_cap;
+		sector_size = host->board->pmecc_sector_size;
+	} else if (nand_chip->onfi_version && nand_chip->onfi_params.ecc_bits != 0xff) {
+		cap = host->board->pmecc_corr_cap = nand_chip->onfi_params.ecc_bits;
+		sector_size = host->board->pmecc_sector_size = 512;
+	} else {
+		dev_err(host->dev,
+			"Can not initialize PMECC bits correction params\n");
+		return -EIO;
+	}
+
 	dev_info(host->dev, "Initialize PMECC params, cap: %d, sector: %d\n",
 		 cap, sector_size);
 
