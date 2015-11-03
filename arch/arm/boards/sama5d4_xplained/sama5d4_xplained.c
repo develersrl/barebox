@@ -43,6 +43,7 @@ static struct atmel_nand_data nand_pdata = {
 	.det_pin	= -EINVAL,
 	.rdy_pin	= -EINVAL,
 	.enable_pin	= -EINVAL,
+	.wp_pin		= AT91_PIN_PD18,
 	.ecc_mode	= NAND_ECC_HW,
 	.has_pmecc	= 1,
 	.on_flash_bbt	= 1,

@@ -91,6 +91,10 @@ void __init at91_add_device_nand(struct atmel_nand_data *data)
 	if (gpio_is_valid(data->det_pin))
 		at91_set_gpio_input(data->det_pin, 1);
 
+	/* disable write protection */
+	if (gpio_is_valid(data->wp_pin))
+		at91_set_gpio_output(data->wp_pin, 1);
+
 	add_generic_device_res("atmel_nand", 0, nand_resources,
 			       ARRAY_SIZE(nand_resources), data);
 }

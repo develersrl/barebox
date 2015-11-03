@@ -58,6 +58,7 @@ struct atmel_nand_data {
 	int		enable_pin;	/* chip enable */
 	int		det_pin;	/* card detect */
 	int		rdy_pin;	/* ready/busy */
+	int		wp_pin;		/* write protection (active low) */
 	u8		ale;		/* address line number connected to ALE */
 	u8		cle;		/* address line number connected to CLE */
 	u8		bus_width_16;	/* buswidth is 16 bit */
