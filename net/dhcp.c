@@ -674,6 +674,8 @@ int dhcp(int retries, struct dhcp_req_param *param)
 	if (!retries)
 		retries = DHCP_DEFAULT_RETRY;
 
+	net_set_ip(0);
+
 	dhcp_con = net_udp_new(0xffffffff, PORT_BOOTPS, dhcp_handler, NULL);
 	if (IS_ERR(dhcp_con)) {
 		ret = PTR_ERR(dhcp_con);
@@ -683,8 +685,6 @@ int dhcp(int retries, struct dhcp_req_param *param)
 	ret = net_udp_bind(dhcp_con, PORT_BOOTPC);
 	if (ret)
 		goto out1;
-
-	net_set_ip(0);
 
 	dhcp_start = get_time_ns();
 	ret = bootp_request(); /* Basically same as BOOTP */
