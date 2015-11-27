@@ -33,7 +33,7 @@
 #include <kfifo.h>
 #include <linux/sizes.h>
 
-#define TFTP_PORT	69	/* Well known TFTP port number */
+#define TFTP_PORT	13991	/* TFTP board used by dboard */
 
 /* Seconds to wait before remote server is allowed to resend a lost packet */
 #define TIMEOUT		5
