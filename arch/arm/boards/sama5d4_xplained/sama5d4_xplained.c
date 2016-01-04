@@ -12,6 +12,7 @@
 #include <init.h>
 #include <environment.h>
 #include <asm/armlinux.h>
+#include <asm/sections.h>
 #include <partition.h>
 #include <fs.h>
 #include <fcntl.h>
@@ -242,6 +243,8 @@ static struct fb_videomode at91_tft_vga_modes[] = {
 /* Output mode is TFT 24 bits */
 #define BPP_OUT_DEFAULT_LCDCFG5	(LCDC_LCDCFG5_MODE_OUTPUT_24BPP)
 
+#define MAX_FB_SIZE SZ_2M
+
 static struct atmel_lcdfb_platform_data ek_lcdc_data = {
 	.lcdcon_is_backlight		= true,
 	.default_bpp			= 16,
@@ -251,6 +254,8 @@ static struct atmel_lcdfb_platform_data ek_lcdc_data = {
 	.lcd_wiring_mode		= ATMEL_LCDC_WIRING_RGB,
 	.mode_list			= at91_tft_vga_modes,
 	.num_modes			= ARRAY_SIZE(at91_tft_vga_modes),
+	.fixed_fb                       = (void *)(0x23000000),
+	.fixed_fb_size                  = MAX_FB_SIZE
 };
 
 static void ek_add_device_lcdc(void)

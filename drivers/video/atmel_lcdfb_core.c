@@ -192,15 +192,24 @@ static int atmel_lcdfb_alloc_video_memory(struct atmel_lcdfb_info *sinfo)
 {
 	struct fb_info *info = &sinfo->info;
 	struct fb_videomode *mode = info->mode;
+	struct atmel_lcdfb_platform_data *pdata = sinfo->pdata;
 	unsigned int smem_len;
-
-	free(info->screen_base);
 
 	smem_len = (mode->xres * mode->yres
 		    * ((info->bits_per_pixel + 7) / 8));
 	smem_len = max(smem_len, sinfo->smem_len);
 
-	info->screen_base = dma_alloc_coherent(smem_len, DMA_ADDRESS_BROKEN);
+	if (pdata->fixed_fb)
+	{
+		if (pdata->fixed_fb_size < smem_len)
+			return -ENOMEM;
+		info->screen_base = pdata->fixed_fb;
+	}
+	else
+	{
+		free(info->screen_base);
+		info->screen_base = dma_alloc_coherent(smem_len, DMA_ADDRESS_BROKEN);
+	}
 
 	if (!info->screen_base)
 		return -ENOMEM;
