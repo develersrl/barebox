@@ -224,6 +224,19 @@ static struct fb_videomode at91_tft_vga_modes[] = {
 		.sync		= 0,
 		.vmode		= FB_VMODE_NONINTERLACED,
 	},
+	{
+		.name		= "RFF700H-AIW",
+		.refresh	= 60,
+		.xres		= 800,		.yres		= 480,
+		.pixclock	= KHZ2PICOS(32260),
+
+		.left_margin	= 2,		.right_margin	= 2,
+		.upper_margin	= 2,		.lower_margin	= 2,
+		.hsync_len	= 256,		.vsync_len	= 45,
+
+		.sync		= 0,
+		.vmode		= FB_VMODE_NONINTERLACED,
+	},
 };
 
 /* Output mode is TFT 24 bits */
