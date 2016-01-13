@@ -245,6 +245,7 @@ static struct fb_videomode at91_tft_vga_modes[] = {
 #define BPP_OUT_DEFAULT_LCDCFG5	(LCDC_LCDCFG5_MODE_OUTPUT_24BPP)
 
 #define MAX_FB_SIZE SZ_2M
+#define FB_ADDRESS  0x23000000
 
 static struct atmel_lcdfb_platform_data ek_lcdc_data = {
 	.lcdcon_is_backlight		= true,
@@ -256,7 +257,7 @@ static struct atmel_lcdfb_platform_data ek_lcdc_data = {
 	.mode_list			= at91_tft_vga_modes,
 	.num_modes			= ARRAY_SIZE(at91_tft_vga_modes),
 	.panel_id			= -1,
-	.fixed_fb                       = (void *)(0x23000000),
+	.fixed_fb                       = (void *)(FB_ADDRESS),
 	.fixed_fb_size                  = MAX_FB_SIZE
 };
 
@@ -550,6 +551,8 @@ static int sama5d4_xplained_postenv_init(void)
 	}
 
 	pr_info("found panel with id %ld, initializing lcd\n", panel_id);
+
+	memset((void*)(FB_ADDRESS), 0, MAX_FB_SIZE);
 
 	ek_lcdc_data.panel_id = panel_id;
 	ek_add_device_lcdc();
