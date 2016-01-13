@@ -48,6 +48,7 @@ struct atmel_lcdfb_platform_data {
 	struct fb_videomode	*mode_list;
 	unsigned		num_modes;
 
+	long			panel_id;
 	void *                  fixed_fb;
 	unsigned int            fixed_fb_size;
 

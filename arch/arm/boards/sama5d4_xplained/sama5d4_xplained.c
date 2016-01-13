@@ -7,6 +7,7 @@
  * Licensed under GPLv2 or later.
  */
 
+#include <command.h>
 #include <common.h>
 #include <net.h>
 #include <init.h>
@@ -254,6 +255,7 @@ static struct atmel_lcdfb_platform_data ek_lcdc_data = {
 	.lcd_wiring_mode		= ATMEL_LCDC_WIRING_RGB,
 	.mode_list			= at91_tft_vga_modes,
 	.num_modes			= ARRAY_SIZE(at91_tft_vga_modes),
+	.panel_id			= -1,
 	.fixed_fb                       = (void *)(0x23000000),
 	.fixed_fb_size                  = MAX_FB_SIZE
 };
@@ -453,7 +455,6 @@ static int sama5d4_xplained_devices_init(void)
 	ek_add_device_eth();
 	ek_add_device_spi();
 	ek_add_device_mci();
-	ek_add_device_lcdc();
 
 	devfs_create_partitions("nand0", sama5d4_xplained_nand0_partitions);
 
@@ -514,3 +515,45 @@ static int sama5d4_xplained_env_init(void)
 	return 0;
 }
 late_initcall(sama5d4_xplained_env_init);
+
+static int sama5d4_xplained_postenv_init(void)
+{
+	struct stat s;
+	char *env_cfg = "/env/config";
+	char *src_cmd[] = { "source", env_cfg };
+	const char *var;
+	long panel_id;
+	int ret;
+
+	ret = stat(env_cfg, &s);
+	if (ret) {
+		pr_info("no configuration file found\n");
+		return 0;
+	}
+
+	ret = execute_command(2, src_cmd);
+	if (ret) {
+		pr_warning("couldn't source config file\n");
+		return 0;
+	}
+
+	var = getenv("panel_id");
+	if (!var) {
+		pr_info("no panel id defined\n");
+		return 0;
+	}
+
+	panel_id = simple_strtol(var, NULL, 0);
+	if (panel_id < 0 || panel_id >= ARRAY_SIZE(at91_tft_vga_modes)) {
+		pr_warning("invalid panel id %ld\n", panel_id);
+		return 0;
+	}
+
+	pr_info("found panel with id %ld, initializing lcd\n", panel_id);
+
+	ek_lcdc_data.panel_id = panel_id;
+	ek_add_device_lcdc();
+
+	return 0;
+}
+postenvironment_initcall(sama5d4_xplained_postenv_init);
