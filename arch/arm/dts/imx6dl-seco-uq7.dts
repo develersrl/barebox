@@ -56,7 +56,35 @@
 				MX6QDL_PAD_SD4_DAT7__SD4_DATA7		0x17059
 			>;
 		};
+
+		pinctrl_enet: enetgrp {
+			fsl,pins = <
+				MX6QDL_PAD_ENET_RXD0__ENET_RX_DATA0	0x1b0b0
+				MX6QDL_PAD_ENET_RXD1__ENET_RX_DATA1	0x1b0b0
+				MX6QDL_PAD_ENET_TX_EN__ENET_TX_EN	0x1b0b0
+				MX6QDL_PAD_ENET_TXD0__ENET_TX_DATA0	0x1b0b0
+				MX6QDL_PAD_ENET_TXD1__ENET_TX_DATA1	0x1b0b0
+				MX6QDL_PAD_ENET_MDC__ENET_MDC		0x1b0b0
+				MX6QDL_PAD_ENET_MDIO__ENET_MDIO		0x1b0b0
+				MX6QDL_PAD_GPIO_3__GPIO1_IO03		0x1f071
+				MX6QDL_PAD_GPIO_2__GPIO1_IO02		0x1f071
+				MX6QDL_PAD_ENET_RX_ER__ENET_RX_ER	0x1b0b0
+				MX6QDL_PAD_GPIO_16__ENET_REF_CLK	0x1b0b0
+				MX6QDL_PAD_ENET_CRS_DV__ENET_RX_EN	0x1b0b0
+				MX6QDL_PAD_ENET_REF_CLK__GPIO1_IO23	0x1b0b0
+			>;
+		};
 	};
+};
+
+&fec {
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_enet>;
+	phy-mode = "rmii";
+	phy-reset-gpios = <&gpio1 3 0>;
+	phy-reset-duration = <20>;
+	fsl,magic-packet;
+	status = "okay";
 };
 
 &ocotp {
