@@ -35,6 +35,8 @@
 #include <spi/spi.h>
 #include <mach/spi.h>
 #include <mach/usb.h>
+#include <bbu.h>
+#include <mach/bbu.h>
 
 static int uq7_mem_init(void)
 {
@@ -51,6 +53,12 @@ static int uq7_devices_init(void)
 {
 	if (!of_machine_is_compatible("seco,imx6dl-uq7-a75-j"))
 		return 0;
+
+	imx6_bbu_internal_mmc_register_handler("emmc", "/dev/mmc2",
+		BBU_HANDLER_FLAG_DEFAULT);
+
+	imx6_bbu_internal_mmc_register_handler("sd", "/dev/mmc3",
+		BBU_HANDLER_FLAG_DEFAULT);
 
 	return 0;
 }
