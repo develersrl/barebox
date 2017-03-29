@@ -51,14 +51,21 @@ mem_initcall(uq7_mem_init);
 
 static int uq7_devices_init(void)
 {
+	int ret;
+	char *env_path;
+
 	if (!of_machine_is_compatible("seco,imx6dl-uq7-a75-j"))
 		return 0;
 
-	imx6_bbu_internal_mmc_register_handler("emmc", "/dev/mmc2",
-		BBU_HANDLER_FLAG_DEFAULT);
+	env_path = asprintf("/chosen/environment-mmc%d",
+				bootsource_get_instance());
 
-	imx6_bbu_internal_mmc_register_handler("sd", "/dev/mmc3",
-		BBU_HANDLER_FLAG_DEFAULT);
+	ret = of_device_enable_path(env_path);
+	if (ret < 0)
+		pr_warn("Failed to enable environment partition '%s' (%d)\n",
+			env_path, ret);
+
+	free(env_path);
 
 	return 0;
 }
