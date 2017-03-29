@@ -1954,7 +1954,6 @@ config CMD_WD_DEFAULT_TIMOUT
 
 config CMD_DBOARD_UTILS
 	bool
-	depends on ARCH_SAMA5D4
 	prompt "dboard command utilities"
 	help
 	  Enable some DevelBoard command utilities,
