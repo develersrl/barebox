@@ -160,6 +160,38 @@ static int atmel_nand_device_ready(struct mtd_info *mtd)
 }
 
 /*
+ * Enable NAND write protection
+ */
+static int atmel_nand_lock(struct mtd_info *mtd, loff_t ofs, size_t len)
+{
+	struct nand_chip *nand_chip = mtd->priv;
+	struct atmel_nand_host *host = nand_chip->priv;
+
+	if (gpio_is_valid(host->board->wp_pin))
+		gpio_set_value(host->board->wp_pin, 0);
+	else
+		return -EINVAL;
+
+	return 0;
+}
+
+/*
+ * Disable NAND write protection
+ */
+static int atmel_nand_unlock(struct mtd_info *mtd, loff_t ofs, size_t len)
+{
+	struct nand_chip *nand_chip = mtd->priv;
+	struct atmel_nand_host *host = nand_chip->priv;
+
+	if (gpio_is_valid(host->board->wp_pin))
+		gpio_set_value(host->board->wp_pin, 1);
+	else
+		return -EINVAL;
+
+	return 0;
+}
+
+/*
  * Minimal-overhead PIO for data access.
  */
 static void atmel_read_buf(struct mtd_info *mtd, u8 *buf, int len)
@@ -1460,6 +1492,28 @@ static int __init atmel_nand_probe(struct device_d *dev)
 	if (nand_scan_tail(mtd)) {
 		res = -ENXIO;
 		goto err_scan_tail;
+	}
+
+	/* Setup NAND protection */
+	if (gpio_is_valid(host->board->wp_pin)) {
+		res = gpio_request(host->board->wp_pin, "nand_wp");
+		if (res < 0) {
+			dev_err(dev,
+				"can't request write-protect gpio %d\n",
+				host->board->wp_pin);
+			goto err_no_card;
+		}
+
+		res = gpio_direction_output(host->board->wp_pin, 1);
+		if (res < 0) {
+			dev_err(dev,
+				"can't request output direction WP gpio %d\n",
+				host->board->wp_pin);
+			goto err_no_card;
+		}
+
+		mtd->lock = atmel_nand_lock;
+		mtd->unlock = atmel_nand_unlock;
 	}
 
 	add_mtd_nand_device(mtd, "nand");
