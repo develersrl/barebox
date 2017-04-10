@@ -37,6 +37,35 @@
 #include <linux/clk.h>
 #include <linux/stat.h>
 #include <envfs.h>
+#include <dboard.h>
+
+
+int dboard_get_serial(uint8_t *out, size_t cnt)
+{
+	struct cdev *cdev;
+	uint8_t mac[6];
+	int i, ret;
+
+	/* MAC addresses are 6 octects long */
+	if (cnt > 6)
+		cnt = 6;
+
+	cdev = cdev_open("eeprom1", O_RWSIZE_1 | O_RDONLY);
+	if (!cdev)
+		return -ENODEV;
+
+	ret = cdev_read(cdev, mac, cnt, 0xA0-cnt, 0);
+	if (ret != cnt)
+		return -EIO;
+
+	cdev_close(cdev);
+
+	/* result needs to be swapped to be coherent with other CPUs */
+	for (i = 0; i < cnt; i++)
+		out[i] = mac[cnt-i-1];
+
+	return 0;
+}
 
 #if defined(CONFIG_NAND_ATMEL)
 static struct atmel_nand_data nand_pdata = {
