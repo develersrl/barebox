@@ -23,6 +23,7 @@
 #include <linux/err.h>
 #include <net.h>
 #include <string.h>
+#include <dboard.h>
 
 
 /*
@@ -262,7 +263,7 @@ static int do_dbnetdiscover(int argc, char *argv[])
 {
 	int ret = 0;
 	int retries = 8;
-	uint8_t mac[6];
+	uint8_t serial[3];
 
 	if (argc < 2) {
 		fprintf(stderr, "error: service not specified\n");
@@ -278,14 +279,14 @@ static int do_dbnetdiscover(int argc, char *argv[])
 		return 1;
 	}
 
-	ret = do_read_mac(mac);
+	ret = dboard_get_serial(serial, 3);
 	if (ret) {
-		fprintf(stderr, "cannot read eeprom: %d\n", ret);
+		fprintf(stderr, "cannot read serial: %d\n", ret);
 		return 1;
 	}
 
 	memset(discover_serial, 0, sizeof(discover_serial));
-	sprintf(discover_serial, "%02X%02X%02X", mac[3],mac[4],mac[5]);
+	sprintf(discover_serial, "%02X%02X%02X", serial[2], serial[1], serial[0]);
 
 	discover_con = net_udp_new(0xffffffff, PORT_DISCOVER, discover_handler, NULL);
 	if (IS_ERR(discover_con)) {
