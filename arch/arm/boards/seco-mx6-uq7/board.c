@@ -37,6 +37,21 @@
 #include <mach/usb.h>
 #include <bbu.h>
 #include <mach/bbu.h>
+#include <dboard.h>
+
+int dboard_get_serial(uint8_t *out, size_t cnt)
+{
+	uint64_t uid;
+
+	/* TODO: find a better, non-breaking way to handle failure here. */
+	uid = imx_uid();
+	if (uid == -ENODEV)
+		return -ENODEV;
+
+	memcpy(out, &uid, min(cnt, sizeof(uid)));
+
+	return 0;
+}
 
 static int uq7_mem_init(void)
 {
