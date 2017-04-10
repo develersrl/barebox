@@ -13,6 +13,7 @@
 
 #include <init.h>
 #include <common.h>
+#include <fcntl.h>
 #include <io.h>
 #include <linux/sizes.h>
 #include <mfd/imx6q-iomuxc-gpr.h>
@@ -25,6 +26,22 @@
 #include <asm/mmu.h>
 
 #define SI_REV 0x260
+
+uint64_t imx_uid(void)
+{
+	struct cdev *cdev;
+	uint64_t uuid;
+
+	cdev = cdev_open("imx-ocotp", O_RDONLY);
+	if (!cdev)
+		return -ENODEV;
+
+	cdev_read(cdev, &uuid, 8, 0x04, 0);
+
+	cdev_close(cdev);
+
+	return uuid;
+}
 
 void imx6_init_lowlevel(void)
 {

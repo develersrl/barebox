@@ -286,3 +286,8 @@ pblx-$(CONFIG_MACH_ELTEC_HIPERCAM) += start_imx6dl_eltec_hipercam
 CFG_start_imx6dl_eltec_hipercam.pblx.imximg = $(board)/eltec-hipercam/flash-header-eltec-hipercam.imxcfg
 FILE_barebox-eltec-hipercam.img = start_imx6dl_eltec_hipercam.pblx.imximg
 image-$(CONFIG_MACH_ELTEC_HIPERCAM) += barebox-eltec-hipercam.img
+
+pblx-$(CONFIG_MACH_SECO_MX6_UQ7) += start_seco_mx6_uq7
+CFG_start_seco_mx6_uq7.pblx.imximg = $(board)/seco-mx6-uq7/flash-header-mx6.imxcfg
+FILE_barebox-seco-mx6-uq7.img = start_seco_mx6_uq7.pblx.imximg
+image-$(CONFIG_MACH_SECO_MX6_UQ7) += barebox-seco-mx6-uq7.img

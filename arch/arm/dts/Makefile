@@ -61,5 +61,6 @@ pbl-dtb-$(CONFIG_MACH_TX6X) += imx6dl-tx6u-801x.dtb.o
 pbl-dtb-$(CONFIG_MACH_UDOO) += imx6q-udoo.dtb.o
 pbl-dtb-$(CONFIG_MACH_USI_TOPKICK) += kirkwood-topkick-bb.dtb.o
 pbl-dtb-$(CONFIG_MACH_VARISCITE_MX6) += imx6q-var-custom.dtb.o
+pbl-dtb-$(CONFIG_MACH_SECO_MX6_UQ7) += imx6dl-seco-uq7.dtb.o
 
 clean-files := *.dtb *.dtb.S .*.dtc .*.pre .*.dts

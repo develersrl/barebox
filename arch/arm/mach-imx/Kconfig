@@ -354,6 +354,10 @@ config MACH_CM_FX6
 	bool "CM FX6"
 	select ARCH_IMX6
 
+config MACH_SECO_MX6_UQ7
+	bool "SECO i.MX6 uQ7-J-A75"
+	select ARCH_IMX6
+
 endif
 
 # ----------------------------------------------------------
