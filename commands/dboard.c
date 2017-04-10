@@ -30,6 +30,7 @@
  *   dboard_info command
  */
 
+#if defined(CONFIG_ARCH_SAMA5D4)
 struct db_model_t {
 	uint16_t rev;
 	uint16_t ram;
@@ -190,6 +191,7 @@ BAREBOX_CMD_START(dboard_info)
 	BAREBOX_CMD_COMPLETE(empty_complete)
 	BAREBOX_CMD_HELP(cmd_dboard_info_help)
 BAREBOX_CMD_END
+#endif
 
 
 /******************************************************************************
