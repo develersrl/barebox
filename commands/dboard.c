@@ -31,19 +31,42 @@
  */
 
 #if defined(CONFIG_ARCH_SAMA5D4)
-struct db_model_t {
+typedef struct db_model_t {
 	uint16_t rev;
 	uint16_t ram;
 	uint16_t flash;
+} db_model_t;
+
+static const db_model_t db_models[] = {
+    { 0, 512, 512 },
+    { 0x0a, 512, 512 },
+    { 1, 512, 512 },
+    { 2, 128, 128 },
+    { 3, 128, 128 },
+    { 4, 256, 512 },
+    { 5, 128, 512 },
+    { 6, 128, 256 },
+    { 7, 256, 256 },
+    { 0x7a, 256, 256 },
+    { 0, 0,   0   }
 };
 
-static const struct db_model_t db_models[] = {
-	{ 0, 512, 512 },
-	{ 1, 512, 512 },
-	{ 2, 128, 128 },
-	{ 3, 128, 128 },
-	{ 4, 256, 512 }
-};
+static const db_model_t *get_dbInfo(int hw_ver)
+{
+    int i;
+    for (i = 0;; i++)
+    {
+        if (db_models[i].rev == 0 &&
+                db_models[i].ram == 0 &&
+                db_models[i].flash == 0)
+            return NULL;
+
+        if(hw_ver == db_models[i].rev)
+            return &db_models[i];
+    }
+
+    return NULL;
+}
 
 
 static int do_read_eeprom(
@@ -138,36 +161,36 @@ static int do_dbinfo(int argc, char *argv[])
 
 
 	/* EEPROM magic pattern or new EEPROM */
-	if (rev == 0x0302 || rev == 0xffff)
-	{
+	info_model = get_dbInfo(rev);
+
+	if (!info_model) {
 		fprintf(stderr, "Not tested. Unknown revision.\n");
 		return 1;
-	}
-	else
-	{
+	} else {
 		// Option "-r"
 		if (revonly) {
-			printf("r%hu\n", rev);
+			printf("r%X\n", rev);
 			return 0;
 		}
 
 		// Option "-v"
 		if (varname) {
-			sprintf(model, "Model: r%hu, RAM %huMB, Flash %huMB",
-				rev, db_models[rev].ram, db_models[rev].flash);
+			sprintf(model, "Model: r%X, RAM %huMB, Flash %huMB",
+				rev, info_model->ram, info_model->flash);
 			setenv(varname, model);
 			return 0;
 		}
 
-		  printf("Code:      DBB%huR%huF-R%hu", db_models[rev].ram, db_models[rev].flash, rev);
-		printf("\nRevision:  %hu", rev);
-		printf("\nRAM:       %huMB", db_models[rev].ram);
-		printf("\nFlash:     %huMB", db_models[rev].flash);
+		  printf("Code:      DBB%huR%huF-R%X", info_model->ram, info_model->flash, rev);
+		printf("\nRevision:  %X", rev);
+		printf("\nRAM:       %huMB", info_model->ram);
+		printf("\nFlash:     %huMB", info_model->flash);
 		printf("\nProtocol:  %hu", pcol);
 		printf("\nTested on: %llu (Unix epoch time)\n", date);
 
 		printf("\nMAC:       "); do_print_hex(mac, 6);
 		printf("\nUUID:      "); do_print_hex(uuid, 16);
+		printf("\nSerial:    %02X%02X%02X", mac[3], mac[4], mac[5]);
 		printf("\n");
 	}
 
